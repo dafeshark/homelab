@@ -1,0 +1,36 @@
+services:
+  beszel:
+    image: 'henrygd/beszel:latest'
+    container_name: beszel
+    restart: unless-stopped
+    ports:
+      - '8090:8090'
+    volumes:
+      - beszel_data:/data
+
+  beszel-agent:
+    image: 'henrygd/beszel-agent:latest'
+    container_name: beszel-agent
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /mnt/hdd:/mnt/hdd:ro
+    environment:
+      PORT: 4567
+      KEY: '${BESZEL_KEY}'
+      FILESYSTEM: mmcblk0p2
+  beszel-agent-sd:
+    image: 'henrygd/beszel-agent:latest'
+    container_name: beszel-agent-sd
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - /mnt/hdd:/mnt/hdd:ro
+    environment:
+      PORT: 4568
+      KEY: '${BESZEL_KEY}'
+      FILESYSTEM: sda1
+
+volumes:
+  beszel_data:

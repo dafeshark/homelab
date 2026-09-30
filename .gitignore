@@ -1,0 +1,9 @@
+.env
+*.pem
+*.key
+*.db
+portainer-backup*
+export-*.json
+data/
+letsencrypt/
+etc-pihole/

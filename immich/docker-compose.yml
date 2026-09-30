@@ -1,0 +1,64 @@
+version: "3.8"
+networks:
+  immich-net:
+    driver: bridge
+services:
+  immich-server:
+    image: ghcr.io/immich-app/immich-server:release
+    container_name: immich_server
+    restart: unless-stopped
+    cpus: 0.5
+    ports:
+      - "2283:2283"
+    environment:
+      - DB_HOSTNAME=immich-postgres
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_DATABASE_NAME=immich
+      - REDIS_HOSTNAME=immich-redis
+      - IMMICH_MAX_CONCURRENT_MANUFACTURING=2
+    volumes:
+      - /mnt/hdd/fotos/immich:/usr/src/app/upload 
+    depends_on:
+      - immich-redis
+      - immich-postgres
+    networks:
+      - immich-net  
+    mem_limit: 1536m
+    mem_reservation: 768m
+
+  immich-machine-learning:
+    image: ghcr.io/immich-app/immich-machine-learning:release
+    container_name: immich_ml
+    restart: unless-stopped
+    volumes:
+      - /mnt/hdd/immich-db/model-cache:/cache
+    networks:
+      - immich-net    
+    mem_limit: 1228m
+    mem_reservation: 512m
+    cpus: 1.0
+  immich-redis:
+    image: redis:alpine
+    container_name: immich_redis
+    restart: unless-stopped
+    networks:
+      - immich-net
+    mem_limit: 256m
+    mem_reservation: 128m
+    cpus: 0.2
+  immich-postgres:
+    image: tensorchord/pgvecto-rs:pg14-v0.2.0
+    container_name: immich_postgres
+    restart: unless-stopped
+    cpus: 0.3
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=immich
+    volumes:
+      - /mnt/hdd/immich-db/postgres:/var/lib/postgresql/data 
+    networks:
+      - immich-net
+    mem_limit: 512m
+    mem_reservation: 256m

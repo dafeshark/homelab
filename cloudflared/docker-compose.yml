@@ -1,0 +1,7 @@
+version: "3.8"
+services:
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    restart: unless-stopped
+    command: tunnel --url http://${HOST_IP}:8123

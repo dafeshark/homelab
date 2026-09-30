@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  app:
+    image: 'jc21/nginx-proxy-manager:latest'
+    container_name: nginx-proxy-manager
+    restart: unless-stopped
+    ports:
+      - '80:80'   # <--- Ahora usa 8080 en lugar de 80
+      - '81:81'     # Panel de control
+      - '4443:443'  # <--- Ahora usa 4443 en lugar de 443
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt

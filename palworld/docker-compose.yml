@@ -1,0 +1,31 @@
+version: "3.8"
+services:
+  palworld:
+    image: thijsvanloef/palworld-server-docker:latest
+    restart: unless-stopped
+    container_name: palworld-server
+    stop_grace_period: 30s
+    mem_limit: 12g
+    mem_reservation: 8g
+    ports:
+      - "8211:8211/udp"
+      - "27015:27015/udp"
+    environment:
+      PUID: 1000
+      PGID: 1000
+      PORT: 8211
+      PLAYERS: 16
+      MULTITHREADING: "true"
+      RCON_ENABLED: "true"
+      RCON_PORT: 25575
+      TZ: "${TZ:-UTC}"
+      ADMIN_PASSWORD: "${PAL_ADMIN_PASSWORD}"
+      COMMUNITY: "false"
+      SERVER_NAME: "Mi Servidor Palworld"
+      SERVER_DESCRIPTION: "Servidor casero"
+      SERVER_PASSWORD: ""
+    volumes:
+      - palworld_data:/palworld/
+
+volumes:
+  palworld_data:
